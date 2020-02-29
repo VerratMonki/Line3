@@ -62,8 +62,7 @@ public class DefaultReader {
                 lineConsumer.nextLine(currentLine);
             }
         }
-        void transportData()
-        {
+        void transportData() throws IOException {
             formatter.writeLines(getData.getLines());
             formatter.writeWords(getData.getWords());
             formatter.writeLetters(getData.getMap());
