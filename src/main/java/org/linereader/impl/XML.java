@@ -3,14 +3,16 @@ package org.linereader.impl;
 import org.linereader.interfaces.Formatter;
 import org.linereader.interfaces.OnError;
 
+import java.io.PrintWriter;
 import java.util.Map;
 
 public class XML implements Formatter {
+    
     @Override
-    public void createNewFile(OnError onError) {
-
+    public void createNewFile(OnError onError, PrintWriter printWriter) {
+    
     }
-
+    
     @Override
     public void writeDate(String date) {
 

@@ -3,76 +3,95 @@ package org.linereader.impl;
 import org.linereader.interfaces.Formatter;
 import org.linereader.interfaces.OnError;
 
+import java.io.FileNotFoundException;
 import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
 import java.util.Map;
 
 public class HTML implements Formatter {
     private final String nameFile = "statistic";
-    private String nameFile2 = nameFile;
     private String typeFile = ".html";
+    private String nameFile2 = nameFile + typeFile;
     private String startHtmlCode = "<html><body>";
     private String endHtmlCode = "</body></html>";
     private int indexFile = 0;
-    PrintWriter printWriter;
-
-    HTML(OnError onError)
+    PrintWriter printWriter = new PrintWriter(nameFile2, "UTF-8");
+    
+    public HTML() throws FileNotFoundException, UnsupportedEncodingException {
+    }
+    
+    void setPrintWriter(PrintWriter printWriter)
     {
-        if(indexFile>0) nameFile2 += Integer.toString(indexFile);
+        this.printWriter = printWriter;
+    }
+    
+    void createTable()
+    {
+        printWriter.print("<table><tr><td>");
+    }
+    
+    void newCell()
+    {
+        printWriter.print("</td><td>");
+    }
+    
+    void newLine()
+    {
+        printWriter.print("</td></tr><tr><td>");
+    }
+    
+    void closeTable()
+    {
+        printWriter.print("</td></tr></table>");
+    }
+
+    @Override
+    public void createNewFile(OnError onError, PrintWriter printWriter) {
+        printWriter.print(15);
+      /*  if(indexFile>0) nameFile2 += Integer.toString(indexFile);
         nameFile2 += typeFile;
         try(PrintWriter printWriter = new PrintWriter(nameFile2, "UTF-8"))
         {
-            nameFile2 = nameFile;
-            printWriter.println(startHtmlCode);
+            //nameFile2 = nameFile;
+            printWriter.print(startHtmlCode);
             setPrintWriter(printWriter);
             indexFile++;
         }catch (Exception ex)
         {
             onError.onError(ex);
-        }
+        }*/
     }
 
-    void setPrintWriter(PrintWriter printWriter)
-    {
-        this.printWriter = printWriter;
-    }
-
-    @Override
-    public void createNewFile(OnError onError) {
-        new HTML(onError);
-    }
-
+    
     @Override
     public void writeDate(String date){
+        createTable();
         printWriter.print(date);
-        writeTab();
     }
 
     @Override
     public void nameFile(String fileName) {
+        newCell();
         printWriter.print("There are in file '" + fileName + "' :");
-        writeTab();
     }
 
     @Override
     public void writeLines(int lines) {
+        newLine();
         printWriter.print(lines + " lines;");
-        writeTab();
     }
 
     @Override
     public void writeWords(int words) {
+        newCell();
         printWriter.print(words + " words;");
-        writeTab();
     }
 
     @Override
     public void writeLetters(Map map) {
+        newCell();
         printWriter.print(map);
         printWriter.print(endHtmlCode);
-    }
-
-    private void writeTab(){
-        String tab = "\t";
-        printWriter.print(tab);
+        closeTable();
     }
 }

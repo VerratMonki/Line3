@@ -31,15 +31,20 @@ public class DefaultReader {
         date = new Date();
     }
 
-    public void tryWithResources() {
+    public void tryWithResources(OnError onError) {
         try (BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(createInputStreamByFilename(), StandardCharsets.UTF_8)))
         {
+            createFile("statistic.html");
             formatter.writeDate(date.toString());
             formatter.nameFile(fileName);
             readFile(bufferedReader, lineConsumer);
         } catch (Exception ex) {
             error.onError(ex);
         }
+    }
+    
+    void createFile(String fileName) throws FileNotFoundException, UnsupportedEncodingException {
+        PrintWriter printWriter = new PrintWriter(fileName, "UTF-8");
     }
     
     FileInputStream createInputStreamByFilename() throws FileNotFoundException {

@@ -6,6 +6,7 @@ import org.linereader.interfaces.OnError;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
+import java.io.PrintWriter;
 import java.util.Map;
 
 public class TXT implements Formatter {
@@ -16,7 +17,7 @@ public class TXT implements Formatter {
     FileOutputStream fileOutputStream;
     ObjectOutputStream objectOutputStream;
 
-    TXT(OnError onError)
+    public TXT(OnError onError)
     {
         if(indexFile>0) nameFile2 += Integer.toString(indexFile);
         nameFile2 += typeFile;
@@ -36,12 +37,12 @@ public class TXT implements Formatter {
     {
         this.fileOutputStream = fileOutputStream;
     }
-
+    
     @Override
-    public void createNewFile(OnError onError) {
-        new TXT(onError);
+    public void createNewFile(OnError onError, PrintWriter printWriter) {
+    
     }
-
+    
     @Override
     public void writeDate(String date) throws IOException {
         fileOutputStream.write(date.getBytes());
