@@ -1,9 +1,9 @@
-package interfaces.impl;
+package org.linereader.impl;
 
-import interfaces.Formatter;
-import interfaces.GetData;
-import interfaces.LineConsumer;
-import interfaces.OnError;
+import org.linereader.interfaces.Formatter;
+import org.linereader.interfaces.GetData;
+import org.linereader.interfaces.LineConsumer;
+import org.linereader.interfaces.OnError;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;

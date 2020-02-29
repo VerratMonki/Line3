@@ -1,6 +1,6 @@
-package interfaces.impl;
+package org.linereader.impl;
 
-import interfaces.LineConsumer;
+import org.linereader.interfaces.LineConsumer;
 
 import java.util.HashMap;
 import java.util.Map;

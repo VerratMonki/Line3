@@ -1,7 +1,7 @@
-package interfaces.impl;
+package org.linereader.impl;
 
-import interfaces.LineConsumer;
-import interfaces.Statistics;
+import org.linereader.interfaces.LineConsumer;
+import org.linereader.interfaces.Statistics;
 
 public class CounterLines implements LineConsumer, Statistics {
     private int counterLines;

@@ -1,7 +1,7 @@
-package interfaces.impl;
+package org.linereader.impl;
 
-import interfaces.LineConsumer;
-import interfaces.OnError;
+import org.linereader.interfaces.LineConsumer;
+import org.linereader.interfaces.OnError;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

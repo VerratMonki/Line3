@@ -1,7 +1,7 @@
-package interfaces.impl;
+package org.linereader.impl;
 
-import interfaces.Formatter;
-import interfaces.OnError;
+import org.linereader.interfaces.Formatter;
+import org.linereader.interfaces.OnError;
 
 import java.io.PrintWriter;
 import java.util.Map;

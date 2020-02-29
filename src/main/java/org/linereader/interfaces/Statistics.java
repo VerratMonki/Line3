@@ -1,4 +1,4 @@
-package interfaces;
+package org.linereader.interfaces;
 
 public interface Statistics {
 	default void statisticLines()

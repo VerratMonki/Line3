@@ -1,4 +1,4 @@
-package interfaces.impl;
+package org.linereader.impl;
 
 import java.util.HashMap;
 import java.util.Map;

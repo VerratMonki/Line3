@@ -1,6 +1,6 @@
-package interfaces.impl;
+package org.linereader.impl;
 
-import interfaces.LineConsumer;
+import org.linereader.interfaces.LineConsumer;
 
 public class CounterWords implements LineConsumer {
     private String[] subLine;

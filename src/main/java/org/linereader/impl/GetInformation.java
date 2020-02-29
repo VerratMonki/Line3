@@ -1,6 +1,6 @@
-package interfaces.impl;
+package org.linereader.impl;
 
-import interfaces.GetData;
+import org.linereader.interfaces.GetData;
 
 import java.util.Map;
 

@@ -1,4 +1,4 @@
-package interfaces;
+package org.linereader.interfaces;
 
 import java.io.IOException;
 import java.util.Map;
