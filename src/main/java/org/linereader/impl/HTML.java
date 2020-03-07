@@ -51,27 +51,52 @@ public class HTML implements Formatter {
         {
             printWriter.print(startHtmlCode);
             createTable(printWriter);
-            printWriter.print(date);
-            newCell(printWriter);
-            newCell(printWriter);
-            printWriter.print("There are in file '");
-            printWriter.print(fileName);
-            printWriter.print("'");
-            newLine(printWriter);
-            printWriter.print(lines);
-            printWriter.print(" lines");
-            newCell(printWriter);
-            printWriter.print(words);
-            printWriter.print(" words");
-            newCell(printWriter);
-            printWriter.print("There are letters : ");
-            printWriter.print(letters);
+            writeDate(printWriter);
+            writeFileName(printWriter);
+            writeLines(printWriter);
+            writeWords(printWriter);
+            writeLetters(printWriter);
             closeTable(printWriter);
             printWriter.print(endHtmlCode);
         }catch (Exception ex)
         {
             onError.onError(ex);
         }
+    }
+
+    void writeDate(PrintWriter printWriter)
+    {
+        printWriter.print(date);
+        newCell(printWriter);
+        newCell(printWriter);
+    }
+
+    void writeFileName(PrintWriter printWriter)
+    {
+        printWriter.print("There are in file '");
+        printWriter.print(fileName);
+        printWriter.print("'");
+        newLine(printWriter);
+    }
+
+    void writeLines(PrintWriter printWriter)
+    {
+        printWriter.print(lines);
+        printWriter.print(" lines");
+        newCell(printWriter);
+    }
+
+    void writeWords(PrintWriter printWriter)
+    {
+        printWriter.print(words);
+        printWriter.print(" words");
+        newCell(printWriter);
+    }
+
+    void writeLetters(PrintWriter printWriter)
+    {
+        printWriter.print("There are letters : ");
+        printWriter.print(letters);
     }
 
     @Override
