@@ -11,14 +11,14 @@ public class CounterWords implements LineConsumer {
         subLine = line.split(spliter);
         for (int i = 0; i < subLine.length; i++)
         {
-            if(subLine[i]==spliter || subLine[i]==null) continue;
+            if(subLine[i]==spliter || line.trim().length() == 0) continue;
             else counterWords++;
         }
     }
 
     @Override
     public void afterReadFile(String fileName) {
-        //System.out.println(counterWords + " words.");
+        System.out.println(counterWords + " words.");
     }
 
     int getCounterWords()

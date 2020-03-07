@@ -1,13 +1,6 @@
 package main;
 
-import org.linereader.impl.Counter;
-import org.linereader.impl.CounterLetters;
-import org.linereader.impl.CounterLines;
-import org.linereader.impl.CounterWords;
-import org.linereader.impl.Counters;
-import org.linereader.impl.DefaultReader;
-import org.linereader.impl.GetInformation;
-import org.linereader.impl.HTML;
+import org.linereader.impl.*;
 import org.linereader.interfaces.Formatter;
 import org.linereader.interfaces.GetData;
 import org.linereader.interfaces.LineConsumer;
@@ -28,8 +21,9 @@ public class Main {
 			OnError onError = ex -> {
 				System.err.println(ex);
 			};
-		Formatter formatter = new HTML();
+		//Formatter formatter = new HTML();
 		//Formatter formatter = new TXT(onError);
+		Formatter formatter = new XML();
 			DefaultReader defaultReader = new DefaultReader("test.txt",
 					counters,
 					onError, formatter, getData);

@@ -9,89 +9,120 @@ import java.io.UnsupportedEncodingException;
 import java.util.Map;
 
 public class HTML implements Formatter {
-    private final String nameFile = "statistic";
-    private String typeFile = ".html";
-    private String nameFile2 = nameFile + typeFile;
+    private final String nameFile = "statistic.html";
     private String startHtmlCode = "<html><body>";
     private String endHtmlCode = "</body></html>";
-    private int indexFile = 0;
-    PrintWriter printWriter = new PrintWriter(nameFile2, "UTF-8");
+    private String fileName;
+    private String date;
+    private int lines;
+    private int words;
+    private Map letters;
     
     public HTML() throws FileNotFoundException, UnsupportedEncodingException {
     }
     
-    void setPrintWriter(PrintWriter printWriter)
-    {
-        this.printWriter = printWriter;
-    }
-    
-    void createTable()
+    void createTable(PrintWriter printWriter)
     {
         printWriter.print("<table><tr><td>");
     }
     
-    void newCell()
+    void newCell(PrintWriter printWriter)
     {
         printWriter.print("</td><td>");
     }
     
-    void newLine()
+    void newLine(PrintWriter printWriter)
     {
         printWriter.print("</td></tr><tr><td>");
     }
     
-    void closeTable()
+    void closeTable(PrintWriter printWriter)
     {
         printWriter.print("</td></tr></table>");
     }
 
+    PrintWriter setPrintWriter() throws FileNotFoundException, UnsupportedEncodingException {
+        return new PrintWriter(nameFile, "UTF-8");
+    }
+
     @Override
-    public void createNewFile(OnError onError, PrintWriter printWriter) {
-        printWriter.print(15);
-      /*  if(indexFile>0) nameFile2 += Integer.toString(indexFile);
-        nameFile2 += typeFile;
-        try(PrintWriter printWriter = new PrintWriter(nameFile2, "UTF-8"))
+    public void createNewFile(OnError onError) {
+        try(PrintWriter printWriter = setPrintWriter())
         {
-            //nameFile2 = nameFile;
             printWriter.print(startHtmlCode);
-            setPrintWriter(printWriter);
-            indexFile++;
+            createTable(printWriter);
+            printWriter.print(date);
+            newCell(printWriter);
+            newCell(printWriter);
+            printWriter.print("There are in file '");
+            printWriter.print(fileName);
+            printWriter.print("'");
+            newLine(printWriter);
+            printWriter.print(lines);
+            printWriter.print(" lines");
+            newCell(printWriter);
+            printWriter.print(words);
+            printWriter.print(" words");
+            newCell(printWriter);
+            printWriter.print("There are letters : ");
+            printWriter.print(letters);
+            closeTable(printWriter);
+            printWriter.print(endHtmlCode);
         }catch (Exception ex)
         {
             onError.onError(ex);
-        }*/
-    }
-
-    
-    @Override
-    public void writeDate(String date){
-        createTable();
-        printWriter.print(date);
+        }
     }
 
     @Override
-    public void nameFile(String fileName) {
-        newCell();
-        printWriter.print("There are in file '" + fileName + "' :");
+    public void setName(String fileName) {
+        this.fileName = fileName;
     }
 
     @Override
-    public void writeLines(int lines) {
-        newLine();
-        printWriter.print(lines + " lines;");
+    public void setLines(int lines) {
+        this.lines = lines;
     }
 
     @Override
-    public void writeWords(int words) {
-        newCell();
-        printWriter.print(words + " words;");
+    public void setWords(int words) {
+        this.words = words;
     }
 
     @Override
-    public void writeLetters(Map map) {
-        newCell();
-        printWriter.print(map);
-        printWriter.print(endHtmlCode);
-        closeTable();
+    public void setLetters(Map map) {
+        letters = map;
     }
+
+    @Override
+    public void setDate(String date) {
+        this.date = date;
+    }
+
+
+//    @Override
+//    public void nameFile(PrintWriter printWriter) {
+//        newCell(printWriter);
+//        printWriter.print("There are in file '" + fileName + "' :");
+//    }
+//
+//    @Override
+//    public void writeLines(PrintWriter printWriter) {
+//        newLine(printWriter);
+//        printWriter.print(lines + " lines;");
+//    }
+//
+//    @Override
+//    public void writeWords(PrintWriter printWriter) {
+//        newCell(printWriter);
+//        printWriter.print(words + " words;");
+//    }
+//
+//    @Override
+//    public void writeLetters(PrintWriter printWriter) {
+//        newCell(printWriter);
+//        printWriter.print(map);
+//        printWriter.print(endHtmlCode);
+//        closeTable(printWriter);
+//    }
 }

@@ -6,85 +6,113 @@ import org.linereader.interfaces.OnError;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
-import java.io.PrintWriter;
 import java.util.Map;
 
 public class TXT implements Formatter {
-    private final String nameFile = "statistic";
-    private String nameFile2 = nameFile;
-    private String typeFile = ".txt";
-    private int indexFile = 0;
-    FileOutputStream fileOutputStream;
-    ObjectOutputStream objectOutputStream;
-
-    public TXT(OnError onError)
-    {
-        if(indexFile>0) nameFile2 += Integer.toString(indexFile);
-        nameFile2 += typeFile;
-        try(FileOutputStream fileOutputStream = new FileOutputStream(nameFile2))
+    private final String nameFile = "statistic.txt";
+    private String fileName;
+    private String date;
+    private int lines;
+    private int words;
+    private Map letters;
+    
+    @Override
+    public void createNewFile(OnError onError) {
+        try(FileOutputStream fileOutputStream = new FileOutputStream(nameFile))
         {
-            objectOutputStream = new ObjectOutputStream(fileOutputStream);
-            nameFile2 = nameFile;
-            setFileOutputStream(fileOutputStream);
-            indexFile++;
+            ObjectOutputStream objectOutputStream = new ObjectOutputStream(fileOutputStream);
+            fileOutputStream.write(date.getBytes());
+            writeTab(fileOutputStream);
+            String startMessage = "There are in file '";
+            String endMessage = "' :";
+            fileOutputStream.write(startMessage.getBytes());
+            fileOutputStream.write(fileName.getBytes());
+            fileOutputStream.write(endMessage.getBytes());
+            writeTab(fileOutputStream);
+            endMessage = " lines";
+            fileOutputStream.write(lines);
+            fileOutputStream.write(endMessage.getBytes());
+            writeTab(fileOutputStream);
+            endMessage = " words";
+            fileOutputStream.write(words);
+            fileOutputStream.write(endMessage.getBytes());
+            writeTab(fileOutputStream);
+            startMessage = "There are letters : ";
+            fileOutputStream.write(startMessage.getBytes());
+            objectOutputStream.writeObject(letters);
         }catch (Exception ex)
         {
             onError.onError(ex);
         }
     }
 
-    void setFileOutputStream(FileOutputStream fileOutputStream)
-    {
-        this.fileOutputStream = fileOutputStream;
-    }
-    
     @Override
-    public void createNewFile(OnError onError, PrintWriter printWriter) {
-    
-    }
-    
-    @Override
-    public void writeDate(String date) throws IOException {
-        fileOutputStream.write(date.getBytes());
-        writeTab();
+    public void setName(String fileName) {
+        this.fileName = fileName;
     }
 
     @Override
-    public void nameFile(String fileName) throws IOException {
-        String startMessage = "There are in file '";
-        String endMessage = "' :";
-        fileOutputStream.write(startMessage.getBytes());
-        fileOutputStream.write(fileName.getBytes());
-        fileOutputStream.write(endMessage.getBytes());
-        writeTab();
+    public void setLines(int lines) {
+        this.lines = lines;
     }
 
     @Override
-    public void writeLines(int lines) throws IOException {
-        String endMessage = " lines;";
-        fileOutputStream.write(lines);
-        fileOutputStream.write(endMessage.getBytes());
-        writeTab();
-
+    public void setWords(int words) {
+        this.words = words;
     }
 
     @Override
-    public void writeWords(int words) throws IOException {
-        String endMessage = " words;";
-        fileOutputStream.write(words);
-        fileOutputStream.write(endMessage.getBytes());
-        writeTab();
+    public void setLetters(Map map) {
+        letters = map;
     }
 
     @Override
-    public void writeLetters(Map map) throws IOException {
-        String startMessage = "There are letters : ";
-        fileOutputStream.write(startMessage.getBytes());
-        objectOutputStream.writeObject(map);
-
+    public void setDate(String date) {
+        this.date = date;
     }
 
-    private void writeTab() throws IOException {
+//    @Override
+//    public void writeDate(String date) throws IOException {
+//        fileOutputStream.write(date.getBytes());
+//        writeTab();
+//    }
+//
+//    @Override
+//    public void nameFile(String fileName) throws IOException {
+//        String startMessage = "There are in file '";
+//        String endMessage = "' :";
+//        fileOutputStream.write(startMessage.getBytes());
+//        fileOutputStream.write(fileName.getBytes());
+//        fileOutputStream.write(endMessage.getBytes());
+//        writeTab();
+//    }
+//
+//    @Override
+//    public void writeLines(int lines) throws IOException {
+//        String endMessage = " lines;";
+//        fileOutputStream.write(lines);
+//        fileOutputStream.write(endMessage.getBytes());
+//        writeTab();
+//
+//    }
+//
+//    @Override
+//    public void writeWords(int words) throws IOException {
+//        String endMessage = " words;";
+//        fileOutputStream.write(words);
+//        fileOutputStream.write(endMessage.getBytes());
+//        writeTab();
+//    }
+//
+//    @Override
+//    public void writeLetters(Map map) throws IOException {
+//        String startMessage = "There are letters : ";
+//        fileOutputStream.write(startMessage.getBytes());
+//        objectOutputStream.writeObject(map);
+//
+//    }
+//
+    private void writeTab(FileOutputStream fileOutputStream) throws IOException {
         String tab = "\t";
         fileOutputStream.write(tab.getBytes());
     }

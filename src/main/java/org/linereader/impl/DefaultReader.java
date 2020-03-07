@@ -34,17 +34,13 @@ public class DefaultReader {
     public void tryWithResources(OnError onError) {
         try (BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(createInputStreamByFilename(), StandardCharsets.UTF_8)))
         {
-            createFile("statistic.html");
-            formatter.writeDate(date.toString());
-            formatter.nameFile(fileName);
+            formatter.setDate(date.toString());
+            formatter.setName(fileName);
             readFile(bufferedReader, lineConsumer);
+            formatter.createNewFile(onError);
         } catch (Exception ex) {
             error.onError(ex);
         }
-    }
-    
-    void createFile(String fileName) throws FileNotFoundException, UnsupportedEncodingException {
-        PrintWriter printWriter = new PrintWriter(fileName, "UTF-8");
     }
     
     FileInputStream createInputStreamByFilename() throws FileNotFoundException {
@@ -67,10 +63,11 @@ public class DefaultReader {
                 lineConsumer.nextLine(currentLine);
             }
         }
+
         void transportData() throws IOException {
-            formatter.writeLines(getData.getLines());
-            formatter.writeWords(getData.getWords());
-            formatter.writeLetters(getData.getMap());
+            formatter.setLines(getData.getLines());
+            formatter.setWords(getData.getWords());
+            formatter.setLetters(getData.getMap());
         }
     
      LineConsumer getLineConsumer() {
