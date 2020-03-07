@@ -81,10 +81,11 @@ class DefaultReaderTest {
         DefaultReader defaultReader = spy(new DefaultReader(null,null));
 //        LineConsumer lineConsumer = spy(new Counters(counterLetters,counterLines,counterWords));
         FileInputStream fileInputStream = mock(FileInputStream.class);
+        OnError onError = mock(OnError.class);
         doReturn(fileInputStream).when(defaultReader).createInputStreamByFilename();
         doNothing().when(defaultReader).readFile(any(BufferedReader.class), any(LineConsumer.class));
         
-        defaultReader.tryWithResources();
+        defaultReader.tryWithResources(onError);
         
         verify(defaultReader).readFile(any(BufferedReader.class), any(LineConsumer.class));
     }
@@ -96,11 +97,12 @@ class DefaultReaderTest {
         LineConsumer lineConsumer = spy(new Counters(counterLetters,counterLines,counterWords));
         DefaultReader defaultReader = spy(new DefaultReader(lineConsumer, error));
         FileInputStream fileInputStream = mock(FileInputStream.class);
+        OnError onError = mock(OnError.class);
         doReturn(fileInputStream).when(defaultReader).createInputStreamByFilename();
         IOException ioException = new IOException();
         doThrow(ioException).when(defaultReader).readFile(any(BufferedReader.class), eq(lineConsumer));
         
-        defaultReader.tryWithResources();
+        defaultReader.tryWithResources(onError);
         
         verify(error).onError(ioException);
     }
