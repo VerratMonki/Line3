@@ -18,9 +18,6 @@ public class HTML implements Formatter {
     private int words;
     private Map letters;
     
-    public HTML() throws FileNotFoundException, UnsupportedEncodingException {
-    }
-    
     void createTable(PrintWriter printWriter)
     {
         printWriter.print("<table><tr><td>");
