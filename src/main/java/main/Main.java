@@ -11,13 +11,16 @@ import java.io.UnsupportedEncodingException;
 
 public class Main {
 	public static void main(String[] args) throws FileNotFoundException, UnsupportedEncodingException {
-        Counter counter = new Counter();
-		CounterLines counterLines = new CounterLines();
-		CounterWords counterWords = new CounterWords();
-		CounterLetters counterLetters = new CounterLetters(counter);
-		LineConsumer lineConsumer = new Counters(counterLetters,counterLines,counterWords);
-		Counters counters = new Counters(counterLetters,counterLines,counterWords);
-		GetData getData = new GetInformation(counters);
+		//for (int i = 1; i < 11; i++) {
+			long start = System.currentTimeMillis();
+		System.out.println("7 - 4761");
+			Counter counter = new Counter();
+			CounterLines counterLines = new CounterLines();
+			CounterWords counterWords = new CounterWords();
+			CounterLetters counterLetters = new CounterLetters(counter);
+			LineConsumer lineConsumer = new Counters(counterLetters, counterLines, counterWords);
+			Counters counters = new Counters(counterLetters, counterLines, counterWords);
+			GetData getData = new GetInformation(counters);
 			OnError onError = ex -> {
 				System.err.println(ex);
 			};
@@ -30,11 +33,12 @@ public class Main {
 			secondThread.start();*/
 
 
-		Formatter formatter = new HTML();
-		//Formatter formatter = new TXT(onError);
-		//Formatter formatter = new XML();
-		ThreadReader threadReader = new ThreadReader(onError, "test.txt", formatter);
-		threadReader.run();
+			Formatter formatter = new HTML();
+			//Formatter formatter = new TXT(onError);
+			//Formatter formatter = new XML();
+			ThreadReader threadReader = new ThreadReader(onError, "test.fb2", formatter, start, 7);
+			Thread threadForRead = new Thread(threadReader);
+			threadForRead.start();
 			/*DefaultReader defaultReader = new DefaultReader("test.txt",
 					counters,
 					onError, formatter, getData);
@@ -45,6 +49,7 @@ public class Main {
 				onError.onError(ex);
 			}*/
 
+		//}
 	}
 }
 

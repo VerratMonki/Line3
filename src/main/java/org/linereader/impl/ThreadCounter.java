@@ -4,6 +4,7 @@ import org.linereader.interfaces.OnError;
 
 import java.util.Map;
 import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class ThreadCounter implements Runnable {
     OnError onError;
@@ -28,7 +29,7 @@ public class ThreadCounter implements Runnable {
         String currentLine;
         try {
             do {
-                currentLine = getCurrentLine();
+                currentLine = arrayBlockingQueue.take();
                 counterLines.nextLine(currentLine);
                 counterWords.nextLine(currentLine);
                 counterLetters.nextLine(currentLine);
@@ -37,10 +38,6 @@ public class ThreadCounter implements Runnable {
         {
             onError.onError(ex);
         }
-    }
-
-    private String getCurrentLine() throws InterruptedException {
-        return arrayBlockingQueue.take();
     }
 
     public int getLines()
@@ -53,7 +50,7 @@ public class ThreadCounter implements Runnable {
         return counterWords.getCounterWords();
     }
 
-    public Map<Character, Integer> getMap()
+    public Map<Character, AtomicInteger> getMap()
     {
         return counterLetters.getMap();
     }

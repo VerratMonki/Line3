@@ -9,13 +9,15 @@ import java.io.UnsupportedEncodingException;
 import java.util.Map;
 
 public class HTML implements Formatter {
-    private final String nameFile = "statistic.html";
+    private String startNameFile = "statisticAtomicInteger";
+    private String endNameFile = ".html";
     private String startHtmlCode = "<html><body>";
     private String endHtmlCode = "</body></html>";
     private String fileName;
     private String date;
     private int lines;
     private int words;
+    private long ms;
     private Map letters;
     
     void createTable(PrintWriter printWriter)
@@ -39,7 +41,7 @@ public class HTML implements Formatter {
     }
 
     PrintWriter setPrintWriter() throws FileNotFoundException, UnsupportedEncodingException {
-        return new PrintWriter(nameFile, "UTF-8");
+        return new PrintWriter(nameNewFile(), "UTF-8");
     }
 
     @Override
@@ -53,12 +55,20 @@ public class HTML implements Formatter {
             writeLines(printWriter);
             writeWords(printWriter);
             writeLetters(printWriter);
+            newLine(printWriter);
+            writeTime(printWriter);
             closeTable(printWriter);
             printWriter.print(endHtmlCode);
         }catch (Exception ex)
         {
             onError.onError(ex);
         }
+    }
+
+    void writeTime(PrintWriter printWriter)
+    {
+        printWriter.print(ms);
+        newCell(printWriter);
     }
 
     void writeDate(PrintWriter printWriter)
@@ -96,6 +106,11 @@ public class HTML implements Formatter {
         printWriter.print(letters);
     }
 
+    private String nameNewFile() {
+        String fileName = startNameFile + endNameFile;
+        return fileName;
+    }
+
     @Override
     public void setName(String fileName) {
         this.fileName = fileName;
@@ -119,6 +134,17 @@ public class HTML implements Formatter {
     @Override
     public void setDate(String date) {
         this.date = date;
+    }
+
+    @Override
+    public void setTime(long ms) {
+        this.ms = ms;
+    }
+
+    @Override
+    public void changeName(int number) {
+        startNameFile += Integer.toString(number);
+        nameNewFile();
     }
 
 

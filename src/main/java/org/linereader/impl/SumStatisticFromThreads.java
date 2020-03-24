@@ -1,69 +1,55 @@
 package org.linereader.impl;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class SumStatisticFromThreads {
-    ThreadCounter firstCounter;
-    ThreadCounter secondCounter;
-    ThreadCounter thirdCounter;
-    ThreadCounter fourthCounter;
-    ThreadCounter fifthCounter;
+    ArrayList<ThreadCounter> threads;
     int sumLines;
     int sumWords;
     int sumNumber;
-    HashMap<Character, Integer> sumMaps;
+    HashMap<Character, AtomicInteger> sumMaps;
 
-    public SumStatisticFromThreads(ThreadCounter firstCounter, ThreadCounter secondCounter, ThreadCounter thirdCounter, ThreadCounter fourthCounter, ThreadCounter fifthCounter) {
-        this.firstCounter = firstCounter;
-        this.secondCounter = secondCounter;
-        this.thirdCounter = thirdCounter;
-        this.fourthCounter = fourthCounter;
-        this.fifthCounter = fifthCounter;
+    public SumStatisticFromThreads(ArrayList threads) {
+        this.threads=threads;
         sumMaps = new HashMap();
     }
 
     public void sumStatistic()
     {
-        sumLines();
-        sumWords();
-        sumMaps(firstCounter);
-        sumMaps(secondCounter);
-        sumMaps(thirdCounter);
-        sumMaps(fourthCounter);
-        sumMaps(fifthCounter);
+        for(int i = 0; i<threads.size();i++)
+        {
+            sumLines(threads.get(i));
+            sumWords(threads.get(i));
+            sumMaps(threads.get(i));
+        }
     }
 
-    private void sumLines()
+    private void sumLines(ThreadCounter threadCounter)
     {
-        sumLines += firstCounter.getLines();
-        sumLines += secondCounter.getLines();
-        sumLines += thirdCounter.getLines();
-        sumLines += fourthCounter.getLines();
-        sumLines += fifthCounter.getLines();
+        sumLines += threadCounter.getLines();
     }
 
-    private  void sumWords()
+    private  void sumWords(ThreadCounter threadCounter)
     {
-        sumWords += firstCounter.getWords();
-        sumWords += secondCounter.getWords();
-        sumWords += thirdCounter.getWords();
-        sumWords += fourthCounter.getWords();
-        sumWords += fifthCounter.getWords();
+        sumWords += threadCounter.getWords();
     }
 
     private void sumMaps(ThreadCounter threadCounter)
     {
-        Map<Character, Integer> currentMap = threadCounter.getMap();
+        Map<Character, AtomicInteger> currentMap = threadCounter.getMap();
         char currentLetter;
         int currentNumber;
-        for (Map.Entry<Character, Integer> output : currentMap.entrySet())
+        for (Map.Entry<Character, AtomicInteger> output : currentMap.entrySet())
         {
             currentLetter = output.getKey();
-            currentNumber = output.getValue();
+            /*currentNumber = output.getValue();
             sumNumber = sumMaps.getOrDefault(currentLetter,0);
             sumNumber += currentNumber;
-            sumMaps.put(currentLetter,sumNumber);
+            sumMaps.put(currentLetter,sumNumber);*/
+            sumMaps.get(currentLetter).addAndGet(output.getValue().get());
         }
     }
 

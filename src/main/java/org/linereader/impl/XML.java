@@ -10,16 +10,18 @@ import java.io.IOException;
 import java.util.Map;
 
 public class XML implements Formatter {
-    private final String nameFile = "statistic.xml";
+    private String startNameFile = "statistic";
+    private String endNameFile= ".xml";
     private String fileName;
     private String date;
     private int lines;
     private int words;
+    private long ms;
     private Map<Character, Integer> letters;
 
     @Override
     public void createNewFile(OnError onError) throws ParserConfigurationException {
-        File file1 = new File(nameFile);
+        File file1 = new File(nameNewFile());
         try(FileWriter fileWriter = new FileWriter(file1)) {
             fileWriter.write(date);
             fileWriter.write("\t");
@@ -34,12 +36,14 @@ public class XML implements Formatter {
             {
                 fileWriter.write("{" + output.getKey() + "} -> " + output.getValue() + ", ");
             }
+            fileWriter.write("\tThe programme worked in " + ms + " ms.");
 //        {
 //            System.out.println("{" + output.getKey() + "} -> " + output.getValue());
 //        }
         } catch (IOException e) {
             onError.onError(e);
         }
+
 
 
         /*DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
@@ -91,6 +95,11 @@ public class XML implements Formatter {
         td.appendChild(date);*/
     }
 
+    String nameNewFile() {
+        String fileName = startNameFile + endNameFile;
+        return fileName;
+    }
+
     @Override
     public void setName(String fileName) {
         this.fileName = fileName;
@@ -114,6 +123,16 @@ public class XML implements Formatter {
     @Override
     public void setDate(String date) {
         this.date = date;
+    }
+
+    @Override
+    public void setTime(long ms) {
+        this.ms = ms;
+    }
+
+    @Override
+    public void changeName(int number) {
+        startNameFile += Integer.toString(number);
     }
 
 //    @Override

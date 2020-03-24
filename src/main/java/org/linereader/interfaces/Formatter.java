@@ -10,4 +10,6 @@ public interface Formatter {
 	void setWords(int words);
 	void setLetters(Map map);
 	void setDate(String date);
+	void setTime(long ms);
+	void changeName(int number);
 }

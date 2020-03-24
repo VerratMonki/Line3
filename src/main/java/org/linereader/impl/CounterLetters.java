@@ -6,7 +6,6 @@ import java.util.Map;
 
 public class CounterLetters implements LineConsumer {
     Counter counter;
-    Map<Character,Integer> linetoMap;
     char[] lineToArray;
     
 

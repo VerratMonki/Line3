@@ -9,16 +9,18 @@ import java.io.ObjectOutputStream;
 import java.util.Map;
 
 public class TXT implements Formatter {
-    private final String nameFile = "statistic.txt";
+    private String startNameFile = "statistic";
+    private String endNameFile= ".txt";
     private String fileName;
     private String date;
     private int lines;
     private int words;
     private Map letters;
+    private long ms;
     
     @Override
     public void createNewFile(OnError onError) {
-        try(FileOutputStream fileOutputStream = new FileOutputStream(nameFile))
+        try(FileOutputStream fileOutputStream = new FileOutputStream(nameNewFile()))
         {
             ObjectOutputStream objectOutputStream = new ObjectOutputStream(fileOutputStream);
             fileOutputStream.write(date.getBytes());
@@ -40,10 +42,22 @@ public class TXT implements Formatter {
             startMessage = "There are letters : ";
             fileOutputStream.write(startMessage.getBytes());
             objectOutputStream.writeObject(letters);
+            startMessage = "The programme worked in ";
+            endMessage = " ms.";
+            writeTab(fileOutputStream);
+            fileOutputStream.write(startMessage.getBytes());
+            fileOutputStream.write((int) ms);
+            fileOutputStream.write(endMessage.getBytes());
         }catch (Exception ex)
         {
             onError.onError(ex);
         }
+    }
+
+    String nameNewFile()
+    {
+        String fileName = startNameFile + endNameFile;
+        return fileName;
     }
 
     @Override
@@ -71,7 +85,17 @@ public class TXT implements Formatter {
         this.date = date;
     }
 
-//    @Override
+    @Override
+    public void setTime(long ms) {
+        this.ms = ms;
+    }
+
+    @Override
+    public void changeName(int number) {
+        startNameFile += Integer.toString(number);
+    }
+
+    //    @Override
 //    public void writeDate(String date) throws IOException {
 //        fileOutputStream.write(date.getBytes());
 //        writeTab();
