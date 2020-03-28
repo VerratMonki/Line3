@@ -14,17 +14,18 @@ public class Main {
 		//for (int i = 1; i < 11; i++) {
 			long start = System.currentTimeMillis();
 		System.out.println("7 - 4761");
-			Counter counter = new Counter();
+		OnError onError = new ErrorAttention();
+			Counter counter = new Counter(onError);
 			CounterLines counterLines = new CounterLines();
-			CounterWords counterWords = new CounterWords();
-			CounterLetters counterLetters = new CounterLetters(counter);
-			LineConsumer lineConsumer = new Counters(counterLetters, counterLines, counterWords);
-			Counters counters = new Counters(counterLetters, counterLines, counterWords);
+			CounterWords counterWords = new CounterWords(onError);
+			CounterLetters counterLetters = new CounterLetters(counter,onError);
+			LineConsumer lineConsumer = new Counters(counterLetters, counterLines, counterWords, onError);
+			Counters counters = new Counters(counterLetters, counterLines, counterWords, onError);
 			GetData getData = new GetInformation(counters);
 			/*OnError onError = ex -> {
 				System.err.println(ex);
 			};*/
-			OnError onError = new ErrorAttention();
+
 		/*CountDownLatch countDownLatch = new CountDownLatch(2);
 			DemoThread firstStream = new DemoThread(countDownLatch);
 			DemoThread secondStream = new DemoThread(countDownLatch);
