@@ -1,34 +1,45 @@
 package org.linereader.impl;
 
 import org.linereader.interfaces.LineConsumer;
+import org.linereader.interfaces.OnError;
 
-import java.util.HashMap;
 import java.util.Map;
 
 public class Counters implements LineConsumer {
     CounterWords counterWords;
     CounterLines counterLines;
     CounterLetters counterLetters;
-    int words;
-    int lines;
-    Map<Character,Integer> characters = new HashMap();
+    OnError onError;
 
-    public Counters(CounterLetters counterLetters, CounterLines counterLines, CounterWords counterWords)
+    //Block #1
+    public Counters(CounterLetters counterLetters, CounterLines counterLines, CounterWords counterWords, OnError onError)
     {
-        this.counterLetters = counterLetters;
-        this.counterLines = counterLines;
-        this.counterWords = counterWords;
+        try {
+            this.counterLetters = counterLetters;
+            this.counterLines = counterLines;
+            this.counterWords = counterWords;
+            this.onError = onError;
+        }catch (Exception ex)
+        {
+            onError.onError(ex, "Counters", "Block #1");
+        }
     }
     
     public Counters() {
     
     }
-    
+
+    //Block #2
     @Override
     public void nextLine(String line) {
+        try {
             counterLines.nextLine(line);
             counterWords.nextLine(line);
             counterLetters.nextLine(line);
+        }catch (Exception ex)
+        {
+            onError.onError(ex,"Counters", "Block #2");
+        }
     }
 
     @Override

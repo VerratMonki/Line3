@@ -19,6 +19,7 @@ public class XML implements Formatter {
     private long ms;
     private Map<Character, Integer> letters;
 
+    //Block #1
     @Override
     public void createNewFile(OnError onError) throws ParserConfigurationException {
         File file1 = new File(nameNewFile());
@@ -41,7 +42,7 @@ public class XML implements Formatter {
 //            System.out.println("{" + output.getKey() + "} -> " + output.getValue());
 //        }
         } catch (IOException e) {
-            onError.onError(e);
+            onError.onError(e, "XML", "Block #1");
         }
 
 

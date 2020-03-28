@@ -21,9 +21,10 @@ public class Main {
 			LineConsumer lineConsumer = new Counters(counterLetters, counterLines, counterWords);
 			Counters counters = new Counters(counterLetters, counterLines, counterWords);
 			GetData getData = new GetInformation(counters);
-			OnError onError = ex -> {
+			/*OnError onError = ex -> {
 				System.err.println(ex);
-			};
+			};*/
+			OnError onError = new ErrorAttention();
 		/*CountDownLatch countDownLatch = new CountDownLatch(2);
 			DemoThread firstStream = new DemoThread(countDownLatch);
 			DemoThread secondStream = new DemoThread(countDownLatch);

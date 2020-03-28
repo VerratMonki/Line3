@@ -31,6 +31,7 @@ public class DefaultReader {
         date = new Date();
     }
 
+//Block #1
     public void tryWithResources(OnError onError) {
         try (BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(createInputStreamByFilename(), StandardCharsets.UTF_8)))
         {
@@ -39,29 +40,41 @@ public class DefaultReader {
             readFile(bufferedReader, lineConsumer);
             formatter.createNewFile(onError);
         } catch (Exception ex) {
-            error.onError(ex);
+            error.onError(ex,"DefaultReader","Block #1");
         }
     }
     
     FileInputStream createInputStreamByFilename() throws FileNotFoundException {
         return new FileInputStream(fileName);
     }
-    
-    void readFile(BufferedReader bufferedReader, LineConsumer lineConsumer) throws IOException {
+
+    //Block #2
+    void readFile(BufferedReader bufferedReader, LineConsumer lineConsumer){
+        try {
             readingLines(lineConsumer, bufferedReader);
             lineConsumer.afterReadFile(fileName);
             transportData();
+        }catch (Exception ex)
+        {
+            error.onError(ex,"DefaultReader","Block #2");
+        }
         }
 
+//Block #3
         //ok
-         void readingLines(LineConsumer lineConsumer, BufferedReader bufferedReader) throws IllegalArgumentException, IOException {
-            if(bufferedReader==null) {
+         void readingLines(LineConsumer lineConsumer, BufferedReader bufferedReader){
+        try {
+            if (bufferedReader == null) {
                 throw new IllegalArgumentException();
             }
-             String currentLine;
-            while ((currentLine = bufferedReader.readLine())!=null) {
+            String currentLine;
+            while ((currentLine = bufferedReader.readLine()) != null) {
                 lineConsumer.nextLine(currentLine);
             }
+        }catch (Exception ex)
+        {
+            error.onError(ex,"DefaultReader","Block #3");
+        }
         }
 
         void transportData() throws IOException {

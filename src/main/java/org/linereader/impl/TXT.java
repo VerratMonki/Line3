@@ -17,7 +17,8 @@ public class TXT implements Formatter {
     private int words;
     private Map letters;
     private long ms;
-    
+
+    //Block #!
     @Override
     public void createNewFile(OnError onError) {
         try(FileOutputStream fileOutputStream = new FileOutputStream(nameNewFile()))
@@ -50,7 +51,7 @@ public class TXT implements Formatter {
             fileOutputStream.write(endMessage.getBytes());
         }catch (Exception ex)
         {
-            onError.onError(ex);
+            onError.onError(ex,"TXT","Block #1");
         }
     }
 

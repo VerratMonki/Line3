@@ -44,6 +44,7 @@ public class HTML implements Formatter {
         return new PrintWriter(nameNewFile(), "UTF-8");
     }
 
+    //Block #1
     @Override
     public void createNewFile(OnError onError) {
         try(PrintWriter printWriter = setPrintWriter())
@@ -61,7 +62,7 @@ public class HTML implements Formatter {
             printWriter.print(endHtmlCode);
         }catch (Exception ex)
         {
-            onError.onError(ex);
+            onError.onError(ex,"HTML", "Block #1");
         }
     }
 
@@ -74,7 +75,6 @@ public class HTML implements Formatter {
     void writeDate(PrintWriter printWriter)
     {
         printWriter.print(date);
-        newCell(printWriter);
         newCell(printWriter);
     }
 

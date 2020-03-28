@@ -14,15 +14,22 @@ public class ThreadCounter implements Runnable {
     CounterLetters counterLetters;
     ArrayBlockingQueue<String> arrayBlockingQueue;
 
+    //Block #1
     public ThreadCounter(ArrayBlockingQueue arrayBlockingQueue, OnError onError) {
-        this.onError = onError;
-        this.arrayBlockingQueue = arrayBlockingQueue;
-        counterLines = new CounterLines();
-        counter = new Counter();
-        counterLetters = new CounterLetters(counter);
-        counterWords = new CounterWords();
+        try {
+            this.onError = onError;
+            this.arrayBlockingQueue = arrayBlockingQueue;
+            counterLines = new CounterLines();
+            counter = new Counter(onError);
+            counterLetters = new CounterLetters(counter, onError);
+            counterWords = new CounterWords(onError);
+        }catch (Exception ex)
+        {
+            onError.onError(ex,"ThreadCounter","Block #1");
+        }
     }
 
+    //Block #2
     @Override
     public void run() {
 
@@ -36,7 +43,7 @@ public class ThreadCounter implements Runnable {
             }while (currentLine!=null);
         }catch (Exception ex)
         {
-            onError.onError(ex);
+            onError.onError(ex,"ThreadCounter", "Block #2");
         }
     }
 
