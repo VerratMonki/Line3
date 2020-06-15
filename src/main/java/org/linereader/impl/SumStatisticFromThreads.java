@@ -66,11 +66,8 @@ public class SumStatisticFromThreads {
             int currentNumber;
             for (Map.Entry<Character, AtomicInteger> output : currentMap.entrySet()) {
                 currentLetter = output.getKey();
-            /*currentNumber = output.getValue();
-            sumNumber = sumMaps.getOrDefault(currentLetter,0);
-            sumNumber += currentNumber;
-            sumMaps.put(currentLetter,sumNumber);*/
-                sumMaps.get(currentLetter).addAndGet(output.getValue().get());
+                if (sumMaps.containsKey(currentLetter)) sumMaps.get(currentLetter).addAndGet(output.getValue().get());
+                else sumMaps.put(currentLetter, new AtomicInteger(output.getValue().get()));
             }
         }catch (Exception ex){
             onError.onError(ex,"SumStatisticFromThreads","Block #2");

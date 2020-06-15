@@ -6,12 +6,12 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class Counter {
+public class CounterLetter {
     private Map<Character, AtomicInteger>counter = new HashMap();
     //private int CounterNumber;
     OnError onError;
 
-    public Counter(OnError onError) {
+    public CounterLetter(OnError onError) {
         this.onError = onError;
     }
 

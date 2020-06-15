@@ -5,15 +5,15 @@ import org.linereader.interfaces.OnError;
 
 import java.util.Map;
 
-public class CounterLetters implements LineConsumer {
-    Counter counter;
+public class BreakLineToCharArray implements LineConsumer {
+    CounterLetter counterLetter;
     char[] lineToArray;
     OnError onError;
     
 
-    public CounterLetters(Counter counter, OnError onError)
+    public BreakLineToCharArray(CounterLetter counterLetter, OnError onError)
     {
-        this.counter = counter;
+        this.counterLetter = counterLetter;
         this.onError = onError;
     }
 
@@ -23,7 +23,7 @@ public class CounterLetters implements LineConsumer {
         try {
             lineToArray = line.toCharArray();
             for (int i = 0; i < lineToArray.length; i++) {
-                counter.count(lineToArray[i]);
+                counterLetter.count(lineToArray[i]);
             }
         }catch (Exception ex)
         {
@@ -38,7 +38,7 @@ public class CounterLetters implements LineConsumer {
 
     public Map getMap()
     {
-        return counter.getMapCounter();
+        return counterLetter.getMapCounter();
     }
 
 }

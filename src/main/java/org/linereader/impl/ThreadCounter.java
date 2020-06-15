@@ -9,10 +9,11 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class ThreadCounter implements Runnable {
     OnError onError;
     CounterLines counterLines;
-    Counter counter;
+    CounterLetter counter;
     CounterWords counterWords;
-    CounterLetters counterLetters;
+    BreakLineToCharArray breakLineToCharArray;
     ArrayBlockingQueue<String> arrayBlockingQueue;
+    private boolean endDocument = false;
 
     //Block #1
     public ThreadCounter(ArrayBlockingQueue arrayBlockingQueue, OnError onError) {
@@ -20,8 +21,8 @@ public class ThreadCounter implements Runnable {
             this.onError = onError;
             this.arrayBlockingQueue = arrayBlockingQueue;
             counterLines = new CounterLines();
-            counter = new Counter(onError);
-            counterLetters = new CounterLetters(counter, onError);
+            counter = new CounterLetter(onError);
+            breakLineToCharArray = new BreakLineToCharArray(counter, onError);
             counterWords = new CounterWords(onError);
         }catch (Exception ex)
         {
@@ -36,11 +37,15 @@ public class ThreadCounter implements Runnable {
         String currentLine;
         try {
             do {
-                currentLine = arrayBlockingQueue.take();
-                counterLines.nextLine(currentLine);
-                counterWords.nextLine(currentLine);
-                counterLetters.nextLine(currentLine);
-            }while (currentLine!=null);
+                do {
+                    currentLine = arrayBlockingQueue.take();
+                    counterLines.nextLine(currentLine);
+                    if (currentLine.trim().length() != 0) {
+                        counterWords.nextLine(currentLine);
+                        breakLineToCharArray.nextLine(currentLine);
+                    }
+                } while (!endDocument);
+            }while (!arrayBlockingQueue.isEmpty());
         }catch (Exception ex)
         {
             onError.onError(ex,"ThreadCounter", "Block #2");
@@ -59,6 +64,11 @@ public class ThreadCounter implements Runnable {
 
     public Map<Character, AtomicInteger> getMap()
     {
-        return counterLetters.getMap();
+        return breakLineToCharArray.getMap();
+    }
+
+    public void changeBoolean()
+    {
+        endDocument = true;
     }
 }

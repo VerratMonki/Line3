@@ -8,14 +8,14 @@ import java.util.Map;
 public class Counters implements LineConsumer {
     CounterWords counterWords;
     CounterLines counterLines;
-    CounterLetters counterLetters;
+    BreakLineToCharArray breakLineToCharArray;
     OnError onError;
 
     //Block #1
-    public Counters(CounterLetters counterLetters, CounterLines counterLines, CounterWords counterWords, OnError onError)
+    public Counters(BreakLineToCharArray breakLineToCharArray, CounterLines counterLines, CounterWords counterWords, OnError onError)
     {
         try {
-            this.counterLetters = counterLetters;
+            this.breakLineToCharArray = breakLineToCharArray;
             this.counterLines = counterLines;
             this.counterWords = counterWords;
             this.onError = onError;
@@ -35,7 +35,7 @@ public class Counters implements LineConsumer {
         try {
             counterLines.nextLine(line);
             counterWords.nextLine(line);
-            counterLetters.nextLine(line);
+            breakLineToCharArray.nextLine(line);
         }catch (Exception ex)
         {
             onError.onError(ex,"Counters", "Block #2");
@@ -59,6 +59,6 @@ public class Counters implements LineConsumer {
     
     Map getMapCounter()
     {
-        return counterLetters.getMap();
+        return breakLineToCharArray.getMap();
     }
 }
