@@ -21,11 +21,11 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 class DefaultReaderTest {
-    OnError error;
-    Counter counter = new Counter();
-    CounterLetters counterLetters = new CounterLetters(counter);
+    OnError error = new ErrorAttention();
+    CounterLetter counterLetter = new CounterLetter(error);
+    BreakLineToCharArray breakLineToCharArray = new BreakLineToCharArray(counterLetter, error);
     CounterLines counterLines = new CounterLines();
-    CounterWords counterWords = new CounterWords();
+    CounterWords counterWords = new CounterWords(error);
     LineConsumer reader;
     
     @BeforeEach
@@ -43,7 +43,7 @@ class DefaultReaderTest {
     @Test
     void callCounter() throws IOException {
         BufferedReader bufferedReader = mock(BufferedReader.class);
-        LineConsumer lineConsumer = spy(new Counters(counterLetters,counterLines,counterWords));
+        LineConsumer lineConsumer = spy(new Counters(breakLineToCharArray,counterLines,counterWords,error));
         DefaultReader defaultReader = spy(new DefaultReader(lineConsumer,null));
         defaultReader.readingLines(mock(LineConsumer.class), bufferedReader);
         when(bufferedReader.readLine()).thenReturn("123").thenReturn(null);
@@ -56,7 +56,7 @@ class DefaultReaderTest {
     @Test
     void callReadingLinesTest() throws IOException {
         BufferedReader bufferedReader = mock(BufferedReader.class);
-        LineConsumer lineConsumer = spy(new Counters(counterLetters,counterLines,counterWords));
+        LineConsumer lineConsumer = spy(new Counters(breakLineToCharArray,counterLines,counterWords, error));
         DefaultReader defaultReader = spy(new DefaultReader(lineConsumer,null));
         
         defaultReader.readFile(bufferedReader, lineConsumer);
@@ -67,7 +67,7 @@ class DefaultReaderTest {
     @Test
     void callAfterReadFile() throws IOException {
         BufferedReader bufferedReader = mock(BufferedReader.class);
-        LineConsumer lineConsumer = spy(new Counters(counterLetters,counterLines,counterWords));
+        LineConsumer lineConsumer = spy(new Counters(breakLineToCharArray,counterLines,counterWords,error));
         DefaultReader defaultReader = spy(new DefaultReader(lineConsumer,null));
     
         defaultReader.readFile(bufferedReader,lineConsumer);
@@ -94,7 +94,7 @@ class DefaultReaderTest {
     void tryWithResourcesException() throws Exception
     {
         OnError error = mock(OnError.class);
-        LineConsumer lineConsumer = spy(new Counters(counterLetters,counterLines,counterWords));
+        LineConsumer lineConsumer = spy(new Counters(breakLineToCharArray,counterLines,counterWords,error));
         DefaultReader defaultReader = spy(new DefaultReader(lineConsumer, error));
         FileInputStream fileInputStream = mock(FileInputStream.class);
         OnError onError = mock(OnError.class);
@@ -104,7 +104,7 @@ class DefaultReaderTest {
         
         defaultReader.tryWithResources(onError);
         
-        verify(error).onError(ioException);
+        verify(error).onError(ioException,"DefaultReader","Block #1");
     }
     
 }

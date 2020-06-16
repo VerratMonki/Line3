@@ -4,6 +4,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.linereader.interfaces.OnError;
 
 import java.util.Map;
 
@@ -21,7 +22,8 @@ class CounterTest {
 	
 	@Test
 	void count() {
-		Counter counter = spy(new Counter());
+		OnError error = new ErrorAttention();
+		CounterLetter counter = spy(new CounterLetter(error));
 		
 		counter.count('g');
 		Map<Character, Integer> mapCounter=counter.getMapCounter();
