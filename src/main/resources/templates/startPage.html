@@ -1,13 +1,30 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:form="http://www.w3.org/1999/xhtml">
 <head>
-    <title>Please, upload file, which you want to view statistic</title>>
+    <title>Please, upload file, which you want to view statistic</title>
     <meta http-equiv="Content-Type" content="text/html" charset="UTF-8"/>
-</head>>
+</head>
 <body>
-<form action="#", th:action="@{/filestatistic}" th:object="${getFile}" method="post">
-    <p>File : <input type="text" th:field="*{fileName}" /></p>>
-    <p><input type="submit" value="Submit" /><input type="reset" value="Reset">
-</form>>
-</body>>
-</html>>
+<form action="#", th:action="@{/filestatistic}" th:object="${getFile}" method="post" enctype="multipart/form-data">
+    <table>
+        <tr>
+            <td><h3><form:label path="file">Select a file to upload : </form:label></h3>
+                <input type="file" name="file" /></td>
+        </tr>
+        <tr>
+            <td>
+                <label for="extension"><h3>Choose an extension of file with statistic : </h3></label>
+            </td>
+            <td>
+                <select name="extension" id="extension" th:field ="*{extension}">
+                    <option value="html"><h4>HTML</h4></option>
+                    <option value="xml"><h4>XML</h4></option>
+                    <option value="json"><h4>JSON</h4></option>
+                </select>
+            </td>
+        </tr>
+    </table>
+    <p><input type="submit" value="Submit" /><input type="reset" value="Reset"></p>
+</form>
+</body>
+</html>

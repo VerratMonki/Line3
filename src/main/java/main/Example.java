@@ -6,9 +6,12 @@ import org.linereader.interfaces.File;
 import org.linereader.interfaces.OnError;
 import org.springframework.boot.*;
 import org.springframework.boot.autoconfigure.*;
+import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.io.FileNotFoundException;
@@ -52,6 +55,14 @@ public class Example {
         return "<html><body><table><tr><td>"+date.toString()+"</td><td>"+(end-start)+"</td><td>"+fileName+"</td></tr><tr><td>"+reader.getSumLines()+" lines</td><td>"+reader.getSumWords()+" words</td></tr></table><table><tr><td>Letters : "+letters+"</td></tr></table></body></html>";
     }*/
 
+    @Bean(name = "multipartResolver")
+    public CommonsMultipartResolver multipartResolver()
+    {
+        CommonsMultipartResolver multipartResolver = new CommonsMultipartResolver();
+        multipartResolver.setMaxUploadSize(10000000);
+        return multipartResolver;
+    }
+
     @RequestMapping(value = "/filestatistic",method = RequestMethod.GET)
     String getFile(Model model)
     {
@@ -62,13 +73,13 @@ public class Example {
     }
 
     @RequestMapping(value = "filestatistic", method = RequestMethod.POST)
-    String sendStatistic(@ModelAttribute GetFile getFile, Model model)
+    String sendStatistic(@ModelAttribute GetFile getFile, @RequestParam("file") MultipartFile file, Model model)
     {
-        String fileName = getFile.getFileName();
+        String fileName = file.getName();
 
         long start = System.currentTimeMillis();
         OnError onError = new ErrorAttention();
-        ThreadReader reader = new ThreadReader(onError, fileName,7);
+        ThreadReader reader = new ThreadReader(onError, file,7);
         reader.run();
         String letters = "{";
         for (Map.Entry<Character, AtomicInteger> output : reader.getSumLetters().entrySet())
