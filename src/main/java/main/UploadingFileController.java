@@ -2,7 +2,6 @@ package main;
 
 import org.linereader.impl.ErrorAttention;
 import org.linereader.impl.ThreadReader;
-import org.linereader.interfaces.File;
 import org.linereader.interfaces.OnError;
 import org.springframework.boot.*;
 import org.springframework.boot.autoconfigure.*;
@@ -12,19 +11,17 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.commons.CommonsMultipartResolver;
-import org.springframework.web.servlet.ModelAndView;
 
-import java.io.FileNotFoundException;
-import java.io.PrintWriter;
-import java.io.UnsupportedEncodingException;
-import java.util.Date;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
 @Controller
 @ControllerAdvice
 @EnableAutoConfiguration
-public class Example {
+public class UploadingFileController {
 
     @RequestMapping("/home")
     String home() {
@@ -32,8 +29,7 @@ public class Example {
     }
 
     /*@RequestMapping("/filestatistic")
-    String statistic()
-     {
+    String statistic() throws FileNotFoundException, UnsupportedEncodingException {
         long start = System.currentTimeMillis();
         Date date = new Date();
         OnError onError = new ErrorAttention();
@@ -59,7 +55,7 @@ public class Example {
     public CommonsMultipartResolver multipartResolver()
     {
         CommonsMultipartResolver multipartResolver = new CommonsMultipartResolver();
-        multipartResolver.setMaxUploadSize(10000000);
+        multipartResolver.setMaxUploadSize(100_000_000);
         return multipartResolver;
     }
 
@@ -67,8 +63,6 @@ public class Example {
     String getFile(Model model)
     {
         model.addAttribute("getFile", new GetFile());
-//        ModelAndView modelAndView = new ModelAndView();
-//        modelAndView.setViewName("startPage");
         return "startPage";
     }
 
@@ -81,21 +75,27 @@ public class Example {
         OnError onError = new ErrorAttention();
         ThreadReader reader = new ThreadReader(onError, file,7);
         reader.run();
-        String letters = "{";
+        int number_letters=0;
+        List<Map> SumLetters = new ArrayList<>();
+        Map<Character,AtomicInteger> letters = new HashMap<>();
         for (Map.Entry<Character, AtomicInteger> output : reader.getSumLetters().entrySet())
         {
-            letters = letters +"'" + output.getKey() + "' -> " + output.getValue() + ", ";
+            letters.put(output.getKey(), new AtomicInteger(output.getValue().get()));
+            number_letters++;
+            if(number_letters>=25)
+            {
+                number_letters=0;
+                SumLetters.add(letters);
+                letters = new HashMap<>();
+            }
         }
-        letters += "}";
+
         long end = System.currentTimeMillis();
 
-        CreateStatistic createStatistic = new CreateStatistic(fileName, (end-start), reader.getSumLines(), reader.getSumWords(), letters);
+        CreateStatistic createStatistic = new CreateStatistic(fileName, (end-start), reader.getSumLines(), reader.getSumWords());
+        createStatistic.getMaps(SumLetters);
         model.addAttribute("createStatistic", createStatistic);
         return "statisticPage";
-    }
-
-    public static void main(String[] args) throws Exception {
-        SpringApplication.run(Example.class, args);
     }
 
 }

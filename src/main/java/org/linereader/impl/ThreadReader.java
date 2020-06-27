@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Map;
 import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class ThreadReader implements Runnable {
@@ -20,10 +21,9 @@ public class ThreadReader implements Runnable {
     private String currentLine;
     private ArrayBlockingQueue<String> arrayBlockingQueue;
     int numberThreads;
-    private boolean way;
     SumStatisticFromThreads sumStatisticFromThreads;
-    private boolean endDocument = false;
-    ArrayList<ThreadCounter> threads = new ArrayList<>();
+    InputStreamReader inputStreamReader;
+    AtomicBoolean endDocument = new AtomicBoolean();
 
     //Block #1
     public ThreadReader(OnError onError, String fileName, int numberThreads) {
@@ -31,7 +31,7 @@ public class ThreadReader implements Runnable {
             this.onError = onError;
             this.fileName = fileName;
             this.numberThreads = numberThreads;
-            way = true;
+            inputStreamReader = new InputStreamReader(new FileInputStream(fileName), StandardCharsets.UTF_8);
         }catch (Exception ex){
             onError.onError(ex, "ThreadReader", "Block #1");
         }
@@ -42,54 +42,56 @@ public class ThreadReader implements Runnable {
             this.onError = onError;
             this.multipartFile=multipartFile;
             this.numberThreads = numberThreads;
-            way = false;
+            inputStreamReader = new InputStreamReader(multipartFile.getInputStream());
         }catch (Exception ex){
             onError.onError(ex, "ThreadReader", "Block #1");
         }
     }
-
-    private InputStreamReader getInputStreamReader() throws IOException {
-        if(way)return new InputStreamReader(new FileInputStream(fileName), StandardCharsets.UTF_8);
-        else return new InputStreamReader(multipartFile.getInputStream());
-    }
-
 
     //Block #2
     @Override
     public void run() {
 
         try {
-            BufferedReader bufferedReader = new BufferedReader(getInputStreamReader());
+            BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
+            endDocument.set(false);
             arrayBlockingQueue = new ArrayBlockingQueue<String>(100);
+            sumStatisticFromThreads = new SumStatisticFromThreads(onError);
+            createThreads();
             addLinesInArray(bufferedReader);
-            sumStatisticFromThreads = new SumStatisticFromThreads(threads,onError);
             sumStatisticFromThreads.sumStatistic();
             while(!sumStatisticFromThreads.checkEnd()){
 
             }
-
         } catch(Exception e){
-            onError.onError(e, "ThreadReader", "Block #2");
+            e.printStackTrace();
+            //onError.onError(e, "ThreadReader", "Block #2");
+        }
+    }
+
+    private void createThreads()
+    {
+        for (int i = 0; i < numberThreads; i++) {
+            CounterLines counterLines = new CounterLines();
+            sumStatisticFromThreads.addElementInMap("counterLines",counterLines);
+            CounterLetter counterLetter = new CounterLetter(onError);
+            BreakLineToCharArray breakLineToCharArray = new BreakLineToCharArray(counterLetter, onError);
+            sumStatisticFromThreads.addElementInMap("counterLetters",breakLineToCharArray);
+            CounterWords counterWords = new CounterWords(onError);
+            sumStatisticFromThreads.addElementInMap("counterWords",counterWords);
+            ThreadCounter threadCounter = new ThreadCounter(arrayBlockingQueue, onError, counterLines, breakLineToCharArray, counterWords, endDocument);
+            Thread thread = new Thread(threadCounter);
+            thread.start();
         }
     }
 
     //Block #3
     private void addLinesInArray(BufferedReader bufferedReader) throws IOException {
         try {
-            for (int i = 0; i < numberThreads; i++) {
-                ThreadCounter threadCounter = new ThreadCounter(arrayBlockingQueue, onError);
-                threads.add(threadCounter);
-                Thread thread = new Thread(threadCounter);
-                thread.start();
-            }
             while ((currentLine = bufferedReader.readLine()) != null) {
-                do {
-                    if (arrayBlockingQueue.size() < 100) break;
-                } while (true);
-                //if (currentLine.trim().length() != 0)
-                arrayBlockingQueue.add(currentLine);
+                while (!arrayBlockingQueue.offer(currentLine)) ;
             }
-            for(int i=0;i<threads.size();i++) threads.get(i).changeBoolean();
+            endDocument.set(true);
             do {
                 if (arrayBlockingQueue.isEmpty()) break;
             } while (true);

@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:text-align="http://www.w3.org/1999/xhtml"
+      xmlns:width="http://www.w3.org/1999/xhtml">
 <head>
     <meta http-equiv="Content-Type" content="text/html" charset="UTF-8">
     <title>Title</title>
@@ -30,12 +31,24 @@ border: none;
 </head>
 <body>
 <h1>Statistic:</h1>
-<p th:text = "'Date - ' + ${createStatistic.date}">
+<p th:text = "'Date - ' + ${createStatistic.date.toString()}">
 <p th:text = "'Name of file : ' + ${createStatistic.fileName}"/>
-<p th:text = "'Program worked - ' + ${createStatistic.timeWork} + ' ms'"/>
+<p th:text = "'Program worked - '+${createStatistic.timeWork} + ' ms'"/>
 <p th:text = "'In the file :'"/>
 <p th:text = "${createStatistic.sumLines} + ' lines and ' + ${createStatistic.sumWords} + ' words.'"/>
-<p th:text = "'Letters in the file : ' + ${createStatistic.sumLetters}">
-    <a href="/filestatistic">Statistic of another file</a>
+Letters :
+<table border="0" border-spacing="10px">
+    <tr>
+        <td th:each = "sumLetters: ${createStatistic.sumLetters}">
+            <table border="1" th:each = "entry : ${sumLetters}">
+                <tr>
+                    <td width="40px" align="center" th:text = "${entry.key}"></td>
+                    <td width="40px" align="right" th:text = "${{entry.value}}" ></td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+</table>
+<button><a href="/filestatistic">Statistic of another file</a></button>
 </body>
 </html>

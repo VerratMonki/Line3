@@ -1,29 +1,40 @@
 package main;
 
 import java.util.Date;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class CreateStatistic {
     private String fileName;
     private long timeWork;
-    Date date1;
-    String date;
+    Date date;
     private int sumLines;
+    private int number_Maps;
     private int sumWords;
-    private String sumLetters;
+    private List sumLetters;
 
-    public CreateStatistic(String fileName, long timeWork, int sumLines, int sumWords, String sumLetters)
+    public CreateStatistic(String fileName, long timeWork, int sumLines, int sumWords)
     {
         this.fileName = fileName;
         this.timeWork = timeWork;
         this.sumLines = sumLines;
         this.sumWords = sumWords;
-        this.sumLetters = sumLetters;
-        date1 = new Date();
-        date = date1.toString();
+        date = new Date();
+    }
+
+    public void getMaps(List sumLetters)
+    {
+        setNumber_Maps(sumLetters.size());
+        this.sumLetters=sumLetters;
+    }
+
+    public void setNumber_Maps(int number_Maps) {
+        this.number_Maps = number_Maps;
     }
 
     public String getDate() {
-        return date;
+        return date.toString();
     }
 
     public String getFileName() {
@@ -42,7 +53,7 @@ public class CreateStatistic {
         return sumWords;
     }
 
-    public String getSumLetters() {
+    public List getSumLetters() {
         return sumLetters;
     }
 }

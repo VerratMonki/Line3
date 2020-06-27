@@ -4,26 +4,26 @@ import org.linereader.interfaces.OnError;
 
 import java.util.Map;
 import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class ThreadCounter implements Runnable {
     OnError onError;
     CounterLines counterLines;
-    CounterLetter counter;
     CounterWords counterWords;
     BreakLineToCharArray breakLineToCharArray;
     ArrayBlockingQueue<String> arrayBlockingQueue;
-    private boolean endDocument = false;
+    private AtomicBoolean endDocument;
 
     //Block #1
-    public ThreadCounter(ArrayBlockingQueue arrayBlockingQueue, OnError onError) {
+    public ThreadCounter(ArrayBlockingQueue arrayBlockingQueue, OnError onError, CounterLines counterLines, BreakLineToCharArray breakLineToCharArray, CounterWords counterWords, AtomicBoolean endDocument) {
         try {
             this.onError = onError;
             this.arrayBlockingQueue = arrayBlockingQueue;
-            counterLines = new CounterLines();
-            counter = new CounterLetter(onError);
-            breakLineToCharArray = new BreakLineToCharArray(counter, onError);
-            counterWords = new CounterWords(onError);
+            this.counterLines = counterLines;
+            this.breakLineToCharArray = breakLineToCharArray;
+            this.counterWords = counterWords;
+            this.endDocument = endDocument;
         }catch (Exception ex)
         {
             onError.onError(ex,"ThreadCounter","Block #1");
@@ -37,15 +37,21 @@ public class ThreadCounter implements Runnable {
         String currentLine;
         try {
             do {
-                do {
-                    currentLine = arrayBlockingQueue.take();
-                    counterLines.nextLine(currentLine);
-                    if (currentLine.trim().length() != 0) {
-                        counterWords.nextLine(currentLine);
-                        breakLineToCharArray.nextLine(currentLine);
-                    }
-                } while (!endDocument);
-            }while (!arrayBlockingQueue.isEmpty());
+                currentLine = null;
+                if(endDocument.get() && arrayBlockingQueue.isEmpty()) {
+                    break;
+                }
+                while (true) {
+                    if(!arrayBlockingQueue.isEmpty()) currentLine = arrayBlockingQueue.take();
+                    if(currentLine!=null)break;
+                }
+                counterLines.nextLine(currentLine);
+                if (currentLine.trim().length() != 0) {
+                    counterWords.nextLine(currentLine);
+                    breakLineToCharArray.nextLine(currentLine);
+                }
+            } while (true);
+
         }catch (Exception ex)
         {
             onError.onError(ex,"ThreadCounter", "Block #2");
@@ -65,10 +71,5 @@ public class ThreadCounter implements Runnable {
     public Map<Character, AtomicInteger> getMap()
     {
         return breakLineToCharArray.getMap();
-    }
-
-    public void changeBoolean()
-    {
-        endDocument = true;
     }
 }

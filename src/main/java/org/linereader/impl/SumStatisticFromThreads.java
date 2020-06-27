@@ -1,35 +1,50 @@
 package org.linereader.impl;
 
+import org.linereader.interfaces.LineConsumer;
 import org.linereader.interfaces.OnError;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class SumStatisticFromThreads {
-    ArrayList<ThreadCounter> threads;
     int sumLines;
     int sumWords;
-    //int sumNumber;
     OnError onError;
     boolean end = false;
+    Map<String, List> counters;
     HashMap<Character, AtomicInteger> sumMaps;
 
-    public SumStatisticFromThreads(ArrayList threads, OnError onError) {
-        this.threads=threads;
+    public SumStatisticFromThreads( OnError onError) {
         sumMaps = new HashMap();
+        counters = new HashMap<String, List>();
         this.onError = onError;
+    }
+
+    public void addElementInMap(String key, LineConsumer lineConsumer)
+    {
+        if(counters.containsKey(key))
+        {
+            counters.get(key).add(lineConsumer);
+        }
+        else
+        {
+            counters.put(key, new ArrayList());
+            counters.get(key).add(lineConsumer);
+        }
     }
 
     //Block #1
     void sumStatistic()
     {
         try {
-            for (int i = 0; i < threads.size(); i++) {
-                sumLines(threads.get(i));
-                sumWords(threads.get(i));
-                sumMaps(threads.get(i));
+            for (Map.Entry<String,List> output : counters.entrySet())
+            {
+                if(output.getKey()=="counterLines")sumLines(output.getValue());
+                if(output.getKey()=="counterWords")sumWords(output.getValue());
+                if(output.getKey()=="counterLetters")sumMaps(output.getValue());
             }
             changeEnd();
         }catch (Exception ex){
@@ -47,27 +62,30 @@ public class SumStatisticFromThreads {
         return end;
     }
 
-    private void sumLines(ThreadCounter threadCounter)
+    private void sumLines(List<CounterLines> counterLines)
     {
-        sumLines += threadCounter.getLines();
+        for (int i=0; i<counterLines.size();i++)sumLines += counterLines.get(i).getCounterLines();
     }
 
-    private  void sumWords(ThreadCounter threadCounter)
+    private  void sumWords(List<CounterWords> counterWords)
     {
-        sumWords += threadCounter.getWords();
+        for (int i=0; i<counterWords.size();i++)sumWords += counterWords.get(i).getCounterWords();
     }
 
     //Block #2
-    private void sumMaps(ThreadCounter threadCounter)
+    private void sumMaps(List<BreakLineToCharArray> counterLetters)
     {
         try {
-            Map<Character, AtomicInteger> currentMap = threadCounter.getMap();
-            char currentLetter;
-            int currentNumber;
-            for (Map.Entry<Character, AtomicInteger> output : currentMap.entrySet()) {
-                currentLetter = output.getKey();
-                if (sumMaps.containsKey(currentLetter)) sumMaps.get(currentLetter).addAndGet(output.getValue().get());
-                else sumMaps.put(currentLetter, new AtomicInteger(output.getValue().get()));
+            for(int i = 0; i<counterLetters.size();i++)
+            {
+                Map<Character, AtomicInteger> currentMap = counterLetters.get(i).getMap();
+                char currentLetter;
+                for (Map.Entry<Character, AtomicInteger> output : currentMap.entrySet()) {
+                    currentLetter = output.getKey();
+                    if (sumMaps.containsKey(currentLetter))
+                        sumMaps.get(currentLetter).addAndGet(output.getValue().get());
+                    else sumMaps.put(currentLetter, new AtomicInteger(output.getValue().get()));
+                }
             }
         }catch (Exception ex){
             onError.onError(ex,"SumStatisticFromThreads","Block #2");
